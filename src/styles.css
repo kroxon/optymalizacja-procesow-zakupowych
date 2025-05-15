@@ -1,0 +1,123 @@
+body {
+  background-image: url('./images/restaurant.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  margin: 0;
+  min-height: 100vh;
+  box-sizing: border-box;
+  overflow: hidden; 
+}
+
+header nav {
+  display: flex;
+  padding: 10px;
+  gap: 30px;
+  justify-content: center;
+  background-color: rgba(42, 19, 143, 0.274);
+}
+
+nav button {
+  display: inline-block;
+  outline: 0;
+  border: 0;
+  cursor: pointer;
+  will-change: box-shadow, transform;
+  background: radial-gradient(100% 100% at 100% 0%, #89e5ffe7 0%, #5468ff9d 100%);
+  box-shadow: 0px 2px 4px rgb(45 35 66 / 40%), 0px 7px 13px -3px rgb(45 35 66 / 30%), inset 0px -3px 0px rgb(58 65 111 / 50%);
+  padding: 0 32px;
+  border-radius: 6px;
+  color: #fff;
+  height: 48px;
+  font-size: 18px;
+  font-weight: 600;
+  text-shadow: 1px 0 rgb(0 0 0 / 40%);
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+nav button:hover {
+  box-shadow: 0px 4px 8px rgb(45 35 66 / 40%), 0px 7px 13px -3px rgb(45 35 66 / 30%), inset 0px -3px 0px #3c4fe0;
+  transform: translateY(-2px);
+}
+
+nav button:active {
+  box-shadow: inset 0px 3px 7px #3c4fe0;
+  transform: translateY(2px);
+}
+
+#author {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: 10px;
+  padding: 2px 5px;
+  border-radius: 5px;
+  background-color: #ffffff75;
+  text-align: center;
+}
+
+#content {
+  margin-top: 20px;
+  height: calc(100vh - 100px); 
+  overflow-y: auto;
+}
+
+#content h1,
+#content p {
+  background-color: #ffffff8c;
+  margin: 0 auto;
+  padding: 20px 20px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.menu-section {
+  padding: 40px;
+  text-align: center;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); 
+  gap: 40px;
+  overflow-y: auto
+}
+
+.menu-item {
+  margin: 20px 0;
+  padding: 10px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  text-align: left;
+}
+
+.menu-item img {
+  height: 150px;
+  width: 100%;
+  object-fit: cover
+}
+
+.menu-item h3 {
+  margin: 10px 0 5px;
+  font-size: 22px;
+  color: #333;
+}
+
+.menu-item p {
+  margin: 0;
+  font-size: 16px;
+  color: #666;
+}
+
+p.price {
+  margin-top: 10px;
+  font-size: 18px;
+  color: #28a745;
+}
+
+img.about {
+  width: 100%;
+  height: auto;
+  margin: 30px 0;
+}
