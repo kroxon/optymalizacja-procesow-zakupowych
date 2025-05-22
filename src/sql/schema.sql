@@ -1,8 +1,8 @@
 CREATE TABLE surowce (
   id SERIAL PRIMARY KEY,
-  nazwa VARCHAR(255) NOT NULL,
-  waga_jednostkowa DECIMAL(10, 2) NOT NULL,
-  jednostka VARCHAR(50)
+  nazwa VARCHAR(55) NOT NULL,
+  jednostka_zakupu DECIMAL(10, 2) NOT NULL,
+  jednostka_miary VARCHAR(10) NOT NULL
 );
 
 CREATE TABLE zuzycie (
@@ -26,8 +26,7 @@ CREATE TABLE dostawy (
 );
 
 CREATE TABLE stan_magazynowy (
-  id SERIAL PRIMARY KEY,
-  id_surowca INT NOT NULL,
+  id_surowca INT PRIMARY KEY,
   ilosc DECIMAL(10, 2) NOT NULL,
   FOREIGN KEY (id_surowca) REFERENCES surowce(id)
     ON DELETE RESTRICT
@@ -35,8 +34,7 @@ CREATE TABLE stan_magazynowy (
 );
 
 CREATE TABLE min_stany (
-  id SERIAL PRIMARY KEY,
-  id_surowca INT NOT NULL,
+  id_surowca INT PRIMARY KEY,
   min_ilosc DECIMAL(10, 2) NOT NULL,
   FOREIGN KEY (id_surowca) REFERENCES surowce(id)
     ON DELETE RESTRICT

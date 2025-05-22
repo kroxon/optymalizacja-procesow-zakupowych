@@ -27,9 +27,10 @@ document.addEventListener('DOMContentLoaded', function() {
             data.forEach(item => {
                 html += `
                     <li>
+                        ID: ${item.id_surowca}, 
                         Nazwa: ${item.nazwa}, 
-                        Waga: ${item.waga_jednostkowa} ${item.jednostka}, 
-                        Stan magazynowy: ${item.stan_magazynowy} (ID: ${item.id_surowca})
+                        jednostka zakupu: ${item.jednostka_zakupu} ${item.jednostka_miary}, 
+                        Stan magazynowy: ${item.stan_magazynowy} ${item.jednostka_miary}
                     </li>`;
             });
             html += '</ul>';

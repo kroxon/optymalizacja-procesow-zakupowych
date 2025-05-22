@@ -8,8 +8,7 @@ BEGIN
         SET ilosc = ilosc + NEW.ilosc
         WHERE id_surowca = NEW.id_surowca;
     ELSE
-        INSERT INTO stan_magazynowy (id_surowca, ilosc)
-        VALUES (NEW.id_surowca, NEW.ilosc);
+        RAISE NOTICE 'Dostawa dla surowca o ID % nie została zarejestrowana w magazynie', NEW.id_surowca;
     END IF;
 
     RETURN NEW;

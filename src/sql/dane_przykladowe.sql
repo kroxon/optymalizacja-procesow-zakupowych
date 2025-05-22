@@ -1,4 +1,4 @@
-INSERT INTO surowce (nazwa, waga_jednostkowa, jednostka) VALUES
+INSERT INTO surowce (nazwa, jednostka_zakupu, jednostka_miary) VALUES
 ('Stal', 7850.00, 'kg'),
 ('Aluminium', 2700.00, 'kg'),
 ('Miedź', 8960.00, 'kg'),
@@ -36,7 +36,13 @@ INSERT INTO stan_magazynowy (id_surowca, ilosc) VALUES
 (12, 650.00),
 (13, 700.00),
 (14, 750.00),
-(15, 800.00);
+(15, 800.00),
+(16, 850.00),
+(17, 900.00),
+(18, 950.00),
+(19, 1000.00),
+(20, 1050.00),
+(21, 200);
 
 INSERT INTO zuzycie (id_surowca, zuzycie, data) VALUES
 (1, 100.00, '2023-01-15'),

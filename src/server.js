@@ -28,8 +28,8 @@ app.get('/api/dane', async (req, res) => {
             SELECT
                 s.id AS id_surowca,
                 s.nazwa,
-                s.waga_jednostkowa,
-                s.jednostka,
+                s.jednostka_zakupu,
+                s.jednostka_miary,
                 COALESCE(sm.ilosc, 0) AS stan_magazynowy
             FROM surowce s
             LEFT JOIN stan_magazynowy sm ON s.id = sm.id_surowca
