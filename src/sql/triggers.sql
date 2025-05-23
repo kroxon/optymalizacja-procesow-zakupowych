@@ -8,7 +8,8 @@ BEGIN
         SET ilosc = ilosc + NEW.ilosc
         WHERE id_surowca = NEW.id_surowca;
     ELSE
-        RAISE NOTICE 'Dostawa dla surowca o ID % nie została zarejestrowana w magazynie', NEW.id_surowca;
+        INSERT INTO stan_magazynowy (id_surowca, ilosc)
+        VALUES (NEW.id_surowca, NEW.ilosc);
     END IF;
 
     RETURN NEW;
@@ -30,7 +31,8 @@ BEGIN
         SET ilosc = ilosc - NEW.zuzycie  
         WHERE id_surowca = NEW.id_surowca;
     ELSE
-        RAISE NOTICE 'Zużycie dla surowca o ID % nie zostało zarejestrowane w magazynie', NEW.id_surowca;
+        INSERT INTO stan_magazynowy (id_surowca, ilosc)
+        VALUES (NEW.id_surowca, -NEW.zuzycie);
     END IF;
 
     RETURN NEW;
@@ -41,3 +43,18 @@ AFTER INSERT ON zuzycie
 FOR EACH ROW
 EXECUTE FUNCTION aktualizuj_stan_magazynowy_po_zuzyciu();
 
+-- Po dodaniu surowca do surowce dodaje wpis do stan magazynowy
+CREATE OR REPLACE FUNCTION dodaj_stan_magazynowy_po_surowcu()
+RETURNS TRIGGER AS $$
+BEGIN
+    -- Dodaj nowy wpis do stan_magazynowy z ilością 0
+    INSERT INTO stan_magazynowy (id_surowca, ilosc)
+    VALUES (NEW.id, 0);
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+CREATE TRIGGER po_dodaniu_surowca
+AFTER INSERT ON surowce
+FOR EACH ROW
+EXECUTE FUNCTION dodaj_stan_magazynowy_po_surowcu();
