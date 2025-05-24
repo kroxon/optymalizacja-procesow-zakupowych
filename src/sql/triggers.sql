@@ -47,7 +47,6 @@ EXECUTE FUNCTION aktualizuj_stan_magazynowy_po_zuzyciu();
 CREATE OR REPLACE FUNCTION dodaj_stan_magazynowy_po_surowcu()
 RETURNS TRIGGER AS $$
 BEGIN
-    -- Dodaj nowy wpis do stan_magazynowy z ilością 0
     INSERT INTO stan_magazynowy (id_surowca, ilosc)
     VALUES (NEW.id, 0);
 
