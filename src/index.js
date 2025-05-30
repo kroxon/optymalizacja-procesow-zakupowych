@@ -18,67 +18,95 @@ document.addEventListener('DOMContentLoaded', function() {
         dataDostawaInput.value = `${rok}-${miesiac}-${dzien}`;
     }
 
-    console.log('Fetching data from /api/dane...');
+    // Helper function to format dates
+    const formatDate = (dateString) => {
+        const date = new Date(dateString);
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const year = date.getFullYear();
+        return `${day}.${month}.${year}`;
+    };
+
+    // Populate "Dane o stanie magazynowym surowców"
     fetch('http://localhost:3000/api/dane')
         .then(response => response.json())
         .then(data => {
-            const daneKontener = document.getElementById('dane-kontener');
-            let html = '<ul>';
+            const daneTabela = document.getElementById('dane-tabela');
+            let html = '<thead><tr><th>ID</th><th>Nazwa</th><th>Jednostka Zakupu</th><th>Stan Magazynowy</th></tr></thead><tbody>';
             data.forEach(item => {
                 html += `
-                    <li>
-                        ID: ${item.id_surowca}, 
-                        Nazwa: ${item.nazwa}, 
-                        jednostka zakupu: ${item.jednostka_zakupu} ${item.jednostka_miary}, 
-                        Stan magazynowy: ${item.stan_magazynowy} ${item.jednostka_miary}
-                    </li>`;
+                    <tr>
+                        <td>${item.id_surowca}</td>
+                        <td>${item.nazwa}</td>
+                        <td>${item.jednostka_zakupu} ${item.jednostka_miary}</td>
+                        <td>${item.stan_magazynowy} ${item.jednostka_miary}</td>
+                    </tr>`;
             });
-            html += '</ul>';
-            daneKontener.innerHTML = html;
+            html += '</tbody>';
+            daneTabela.innerHTML = html;
         })
         .catch(error => console.error('Błąd pobierania danych:', error));
 
+    // Populate "Lista Zużyć"
     fetch('http://localhost:3000/api/zuzycie')
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return response.json();
-        })
+        .then(response => response.json())
         .then(data => {
-            const zuzyciaKontener = document.getElementById('zuzycia-kontener');
-            let html = '<ul>';
+            const zuzyciaTabela = document.getElementById('zuzycia-tabela');
+            let html = '<thead><tr><th>ID Surowca</th><th>Nazwa</th><th>Zużycie</th><th>Data</th></tr></thead><tbody>';
             data.forEach(item => {
                 html += `
-                    <li>
-                        ID Surowca: ${item.id_surowca}, 
-                        Nazwa: ${item.nazwa_surowca}, 
-                        Zużycie: ${item.zuzycie}, 
-                        Data: ${item.data}
-                    </li>`;
+                    <tr>
+                        <td>${item.id_surowca}</td>
+                        <td>${item.nazwa_surowca}</td>
+                        <td>${item.zuzycie}</td>
+                        <td>${formatDate(item.data)}</td>
+                    </tr>`;
             });
-            html += '</ul>';
-            zuzyciaKontener.innerHTML = html;
+            html += '</tbody>';
+            zuzyciaTabela.innerHTML = html;
         })
         .catch(error => console.error('Błąd pobierania zużyć:', error));
 
+    // Populate "Lista Dostaw"
     fetch('http://localhost:3000/api/dostawy')
         .then(response => response.json())
         .then(data => {
-            const dostawyKontener = document.getElementById('dostawy-kontener');
-            let html = '<ul>';
+            const dostawyTabela = document.getElementById('dostawy-tabela');
+            let html = '<thead><tr><th>ID Surowca</th><th>Nazwa</th><th>Ilość</th><th>Data</th></tr></thead><tbody>';
             data.forEach(item => {
                 html += `
-                    <li>
-                        ID Surowca: ${item.id_surowca}, 
-                        Ilość: ${item.ilosc}, 
-                        Data: ${item.data}
-                    </li>`;
+                    <tr>
+                        <td>${item.id_surowca}</td>
+                        <td>${item.nazwa_surowca}</td>
+                        <td>${item.ilosc}</td>
+                        <td>${formatDate(item.data)}</td>
+                    </tr>`;
             });
-            html += '</ul>';
-            dostawyKontener.innerHTML = html;
+            html += '</tbody>';
+            dostawyTabela.innerHTML = html;
         })
         .catch(error => console.error('Błąd pobierania dostaw:', error));
+
+    // Populate "Dni do minimalnego stanu"
+    fetch('http://localhost:3000/api/surowce/days')
+        .then(response => response.json())
+        .then(data => {
+            const dniTabela = document.getElementById('dni-tabela');
+            let html = '<thead><tr><th>Surowiec</th><th>Obecny Stan</th><th>Minimalny Stan</th><th>Średnie Zużycie Dzienne</th><th>Dni do Minimalnego Stanu</th></tr></thead><tbody>';
+            data.forEach(item => {
+                html += `
+                    <tr>
+                        <td>${item.surowiec}</td>
+                        <td>${item.obecny_stan_magazynowy}</td>
+                        <td>${item.minimalny_stan_dopuszczalny}</td>
+                        <td>${item.srednie_zuzycie_dzienne}</td>
+                        <td>${item.dni_do_minimalnego_stanu_lub_zero}</td>
+                    </tr>`;
+            });
+            html += '</tbody>';
+            dniTabela.innerHTML = html;
+        })
+        .catch(error => console.error('Błąd pobierania danych o dniach:', error));
 
     const zuzycieForm = document.getElementById('dodaj-zuzycie-form');
     zuzycieForm.addEventListener('submit', function(event) {
@@ -126,6 +154,41 @@ document.addEventListener('DOMContentLoaded', function() {
             location.reload(); 
         })
         .catch(error => alert('Wystąpił błąd podczas dodawania dostawy.'));
+    });
+
+    const surowiecForm = document.getElementById('dodaj-surowiec-form');
+    surowiecForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const nazwa = document.getElementById('nazwa-surowca').value;
+        const jednostkaZakupu = document.getElementById('jednostka-zakupu').value;
+        const jednostkaMiary = document.getElementById('jednostka-miary').value;
+
+        const payload = {
+            nazwa,
+            jednostka_zakupu: parseFloat(jednostkaZakupu),
+            jednostka_miary: jednostkaMiary,
+        };
+
+        fetch('http://localhost:3000/api/surowce/add', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(result => {
+            alert('Surowiec został dodany pomyślnie!');
+            surowiecForm.reset();
+            location.reload(); 
+        })
+        .catch(error => {
+            alert('Wystąpił błąd podczas dodawania surowca.');
+        });
     });
 });
 

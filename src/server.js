@@ -3,6 +3,7 @@ require('dotenv').config({ path: '/home/linux/repos/optymalizacja-procesow-zakup
 const express = require('express');
 const { Client } = require('pg');
 const cors = require('cors');
+const { Sequelize, DataTypes } = require('sequelize');
 
 const app = express();
 const port = 3000;
@@ -21,6 +22,39 @@ const client = new Client({
 client.connect()
     .then(() => console.log(`Połączono z PostgreSQL ${client.database}`))
     .catch(err => console.error('Błąd połączenia z PostgreSQL', err));
+
+const sequelize = new Sequelize(
+    process.env.DATABASE_NAME,
+    process.env.DATABASE_USER,
+    process.env.DATABASE_PASSWORD,
+    {
+        host: process.env.DATABASE_HOST,
+        dialect: 'postgres',
+        port: process.env.DATABASE_PORT,
+    }
+);
+
+const Surowce = sequelize.define('Surowce', {
+    id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+    nazwa: { type: DataTypes.STRING, allowNull: false },
+    jednostka_zakupu: { type: DataTypes.DECIMAL(10, 2), allowNull: false },
+    jednostka_miary: { type: DataTypes.STRING, allowNull: false },
+}, { tableName: 'surowce', timestamps: false });
+
+app.post('/api/surowce/add', async (req, res) => {
+    const { nazwa, jednostka_zakupu, jednostka_miary } = req.body;
+
+    try {
+        const newSurowiec = await Surowce.create({
+            nazwa,
+            jednostka_zakupu,
+            jednostka_miary,
+        });
+        res.status(201).json(newSurowiec);
+    } catch (err) {
+        res.status(500).json({ error: 'Wystąpił błąd serwera', details: err.message });
+    }
+});
 
 app.get('/api/dane', async (req, res) => {
     try {
@@ -175,6 +209,64 @@ app.get('/api/dostawy', async (req, res) => {
         res.json(result.rows);
     } catch (err) {
         console.error('Błąd podczas pobierania dostaw:', err);
+        res.status(500).json({ error: 'Wystąpił błąd serwera' });
+    }
+});
+
+app.get('/api/surowce', async (req, res) => {
+    try {
+        const surowce = await Surowce.findAll();
+        res.json(surowce);
+    } catch (err) {
+        console.error('Błąd podczas pobierania surowców:', err);
+        res.status(500).json({ error: 'Wystąpił błąd serwera' });
+    }
+});
+
+app.get('/api/surowce/days', async (req, res) => {
+    try {
+        const query = `
+            SELECT
+                s.nazwa AS surowiec,
+                COALESCE(sm.ilosc, 0) AS obecny_stan_magazynowy,
+                COALESCE(ms.min_ilosc, NULL) AS minimalny_stan_dopuszczalny,
+                ROUND(SUM(z.zuzycie) FILTER (WHERE z.data >= (CURRENT_DATE - INTERVAL '30 days') AND z.data < CURRENT_DATE), 2) AS calkowite_zuzycie_30_dni,
+                ROUND(COALESCE(SUM(z.zuzycie) FILTER (WHERE z.data >= (CURRENT_DATE - INTERVAL '30 days') 
+                    AND z.data < CURRENT_DATE), 0) / 30.0, 2) AS srednie_zuzycie_dzienne,
+                CASE
+                    WHEN ROUND(COALESCE(SUM(z.zuzycie) FILTER (WHERE z.data >= (CURRENT_DATE - INTERVAL '30 days') 
+                        AND z.data < CURRENT_DATE), 0) / 30.0, 2) > 0 THEN
+                        CASE
+                            WHEN ms.min_ilosc IS NOT NULL THEN
+                                ROUND((COALESCE(sm.ilosc, 0) - ms.min_ilosc) / ROUND(COALESCE(SUM(z.zuzycie) 
+                                    FILTER (WHERE z.data >= (CURRENT_DATE - INTERVAL '30 days') AND z.data < CURRENT_DATE), 0) / 30.0, 2), 2)
+                            ELSE
+                                ROUND(
+                                    COALESCE(sm.ilosc, 0) / ROUND(COALESCE(SUM(z.zuzycie) 
+                                        FILTER (WHERE z.data >= (CURRENT_DATE - INTERVAL '30 days') AND z.data < CURRENT_DATE), 0) / 30.0, 2), 2)
+                        END
+                    ELSE
+                        NULL 
+                END AS dni_do_minimalnego_stanu_lub_zero
+            FROM
+                surowce s
+            LEFT JOIN
+                stan_magazynowy sm ON s.id = sm.id_surowca
+            LEFT JOIN
+                min_stany ms ON s.id = ms.id_surowca
+            LEFT JOIN
+                zuzycie z ON s.id = z.id_surowca
+            WHERE
+                z.data >= (CURRENT_DATE - INTERVAL '30 days') AND z.data < CURRENT_DATE OR z.id_surowca IS NULL
+            GROUP BY
+                s.nazwa, sm.ilosc, ms.min_ilosc
+            ORDER BY
+                dni_do_minimalnego_stanu_lub_zero NULLS LAST, surowiec;
+        `;
+        const result = await client.query(query);
+        res.json(result.rows);
+    } catch (err) {
+        console.error('Błąd podczas pobierania danych o dniach:', err);
         res.status(500).json({ error: 'Wystąpił błąd serwera' });
     }
 });

@@ -11,39 +11,74 @@
     <div class="container">
         <div>
             <h2>Dane o stanie magazynowym surowców</h2>
-            <div id="dane-kontener" class="scrollable-container"></div>
+            <table id="dane-tabela" class="modern-table"></table>
         </div>
         <div>
             <h2>Lista Zużyć</h2>
-            <div id="zuzycia-kontener" class="scrollable-container"></div>
+            <table id="zuzycia-tabela" class="modern-table"></table>
         </div>
         <div>
             <h2>Lista Dostaw</h2>
-            <div id="dostawy-kontener" class="scrollable-container"></div>
+            <table id="dostawy-tabela" class="modern-table"></table>
+        </div>
+        <div>
+            <h2>Dni do minimalnego stanu</h2>
+            <table id="dni-tabela" class="modern-table"></table>
         </div>
     </div>
 
-    <h2>Dodaj Zużycie</h2>
-    <form id="dodaj-zuzycie-form">
-        <label for="id-surowca">ID Surowca:</label>
-        <input type="number" id="id-surowca" name="id-surowca" required>
-        <label for="zuzycie">Zużycie:</label>
-        <input type="number" id="zuzycie" name="zuzycie" step="0.01" required>
-        <label for="data">Data:</label>
-        <input type="date" id="data" name="data" required>
-        <button type="submit">Dodaj Zużycie</button>
-    </form>
+    <div class="form-container">
+        <form id="dodaj-zuzycie-form" class="modern-form">
+            <h2>Dodaj Zużycie</h2>
+            <div class="form-group">
+                <label for="id-surowca">ID Surowca:</label>
+                <input type="number" id="id-surowca" name="id-surowca" required>
+            </div>
+            <div class="form-group">
+                <label for="zuzycie">Zużycie:</label>
+                <input type="number" id="zuzycie" name="zuzycie" step="0.01" required>
+            </div>
+            <div class="form-group">
+                <label for="data">Data:</label>
+                <input type="date" id="data" name="data" required>
+            </div>
+            <button type="submit" class="modern-button">Dodaj Zużycie</button>
+        </form>
 
-    <h2>Dodaj Dostawę</h2>
-    <form id="dodaj-dostawe-form">
-        <label for="id-surowca-dostawa">ID Surowca:</label>
-        <input type="number" id="id-surowca-dostawa" name="id-surowca-dostawa" required>
-        <label for="ilosc-dostawa">Ilość:</label>
-        <input type="number" id="ilosc-dostawa" name="ilosc-dostawa" step="0.01" required>
-        <label for="data-dostawa">Data:</label>
-        <input type="date" id="data-dostawa" name="data-dostawa" required>
-        <button type="submit">Dodaj Dostawę</button>
-    </form>
+        <form id="dodaj-dostawe-form" class="modern-form">
+            <h2>Dodaj Dostawę</h2>
+            <div class="form-group">
+                <label for="id-surowca-dostawa">ID Surowca:</label>
+                <input type="number" id="id-surowca-dostawa" name="id-surowca-dostawa" required>
+            </div>
+            <div class="form-group">
+                <label for="ilosc-dostawa">Ilość:</label>
+                <input type="number" id="ilosc-dostawa" name="ilosc-dostawa" step="0.01" required>
+            </div>
+            <div class="form-group">
+                <label for="data-dostawa">Data:</label>
+                <input type="date" id="data-dostawa" name="data-dostawa" required>
+            </div>
+            <button type="submit" class="modern-button">Dodaj Dostawę</button>
+        </form>
+
+        <form id="dodaj-surowiec-form" class="modern-form">
+            <h2>Dodaj Nowy Surowiec</h2>
+            <div class="form-group">
+                <label for="nazwa-surowca">Nazwa:</label>
+                <input type="text" id="nazwa-surowca" name="nazwa-surowca" required>
+            </div>
+            <div class="form-group">
+                <label for="jednostka-zakupu">Jednostka Zakupu:</label>
+                <input type="number" id="jednostka-zakupu" name="jednostka-zakupu" step="0.01" required>
+            </div>
+            <div class="form-group">
+                <label for="jednostka-miary">Jednostka Miary:</label>
+                <input type="text" id="jednostka-miary" name="jednostka-miary" required>
+            </div>
+            <button type="submit" class="modern-button">Dodaj Surowiec</button>
+        </form>
+    </div>
 
     <script src="index.js" defer></script>
 </body>
