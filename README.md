@@ -19,5 +19,4 @@ Projekt został zrealizowany przy użyciu następujących technologii:
 ## Zrzut Ekranu  
 Poniżej znajduje się zrzut ekranu przedstawiający interfejs użytkownika:  
 
-![System Optymalizacji Procesów Zakupowych](https://i.imgur.com/your-image-link.png)  
-
+![System Optymalizacji Procesów Zakupowych](assets/bd.png)
